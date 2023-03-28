@@ -1,0 +1,12 @@
+/test/
+*.o
+*.d
+*.crf
+.vscode
+*.sct
+*.dep
+*.axf
+^flightcontrol.htm
+*.lnp
+*.map
+*.Bak
