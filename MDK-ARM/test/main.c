@@ -1,35 +1,157 @@
 #include "stdio.h"
+#include "string.h"
+#include "stdlib.h"
+#include "stdbool.h"
+#include "stddef.h"
+#include "stdint.h"
 
-typedef struct MOTOR
+#define FACTOR 1.5f
+
+typedef int LinearType;
+typedef void (*ForEach_CallBack)(LinearType *pdata, uint32_t index, LinearType *lists);
+typedef struct linearlist linearlist_t;
+
+struct linearlist
 {
-  float f_v;
-} motor_t;
-
-typedef union Motor_Dist_Value
-{
-  float M1;
-  float M2;
-  float M3;
-  float M4;
-  char Mx[16];
-} motor_dist_value_t;
-
-motor_t pdata[4];
-
-motor_dist_value_t motor_d = {
-    .M1 = 92.3,
-    .M2 = 32.3,
-    .M3 = 22.3,
-    .M4 = 92.3,
+  LinearType *list;
+  uint32_t index;
+  uint32_t max_size;
+  bool (*empty)(linearlist_t *list);
+  uint32_t (*size)(linearlist_t *list);
+  LinearType (*get)(linearlist_t *list, uint32_t i);
+  bool (*erase)(linearlist_t *list, uint32_t i);
+  bool (*set)(linearlist_t *list, LinearType *pdata, uint32_t i);
+  void (*foreach)(linearlist_t *list, ForEach_CallBack callbackFn);
 };
+
+linearlist_t *Create_LinearList(uint32_t length);
+
+bool List_Adjust(linearlist_t *list, uint32_t C);
+bool empty(linearlist_t *list);
+uint32_t size(linearlist_t *list);
+LinearType get(linearlist_t *list, uint32_t i);
+bool erase(linearlist_t *list, uint32_t i);
+bool set(linearlist_t *list, LinearType *pdata, uint32_t i);
+void foreach (linearlist_t *list, ForEach_CallBack callbackFn);
+
+linearlist_t *Create_LinearList(uint32_t length)
+{
+  LinearType *list = (LinearType *)malloc(sizeof(LinearType) * length);
+
+  static linearlist_t linearlist = {
+      .empty = empty,
+      .erase = erase,
+      .foreach = foreach,
+      .get = get,
+      .index = 0,
+      .set = set,
+      .size = size,
+  };
+
+  linearlist.list = list;
+  linearlist.max_size = length;
+
+  return &linearlist;
+}
+
+bool empty(linearlist_t *list)
+{
+  return list->index <= 0 ? true : false;
+}
+
+uint32_t size(linearlist_t *list)
+{
+  return list->index;
+}
+
+LinearType get(linearlist_t *list, uint32_t i)
+{
+  if (i >= list->max_size || i < 0)
+  {
+    return (LinearType)-1;
+  }
+
+  return list->list[i];
+}
+
+bool erase(linearlist_t *list, uint32_t i)
+{
+  if (i >= list->max_size || i < 0)
+  {
+    return false;
+  }
+
+  strncpy((char *)list->list + i, (char *)list->list + i + 1, list->index - i);
+  *(list->list + list->index - 1) = 0x00;
+
+  list->index -= 1;
+
+  return true;
+}
+
+bool set(linearlist_t *list, LinearType *pdata, uint32_t i)
+{
+  if (i >= list->max_size || i < 0)
+  {
+    return false;
+  }
+
+  if (list->index == list->max_size)
+  {
+    if (List_Adjust(list, FACTOR) == false)
+    {
+      return false;
+    }
+  }
+
+  list->list[i] = (LinearType)pdata;
+  list->index += 1;
+
+  return true;
+}
+
+void foreach (linearlist_t *list, ForEach_CallBack callbackFn)
+{
+  for (size_t i = 0; i < list->index; i++)
+  {
+    callbackFn(list->list + i, i, list->list);
+  }
+}
+
+bool List_Adjust(linearlist_t *list, uint32_t C)
+{
+  const int newLength = (int)((float)list->max_size) * C;
+
+  LinearType *newlist = (LinearType *)malloc(sizeof(LinearType) * newLength);
+
+  if (newlist == NULL)
+  {
+    return false;
+  }
+
+  strcpy((char *)newlist, (char *)list->list);
+
+  free(list->list);
+
+  list->list = newlist;
+  list->max_size = newLength;
+
+  return true;
+}
+
+void func()
+{
+  printf("test\n");
+}
 
 int main(int argc, char const *argv[])
 {
 
-  printf("%f\n", *(float *)&motor_d.Mx[0]);
-  printf("%f\n", *(float *)&motor_d.Mx[4]);
-  printf("%f\n", *(float *)&motor_d.Mx[8]);
-  printf("%f\n", *(float *)&motor_d.Mx[12]);
+  linearlist_t *list = Create_LinearList(5);
+
+  list->set(list, (LinearType *)func, list->size(list));
+
+  ((void (*)())(list->get(list, 0)))();
 
   while (1)
   {
