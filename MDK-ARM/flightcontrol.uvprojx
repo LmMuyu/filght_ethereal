@@ -608,6 +608,11 @@
               <FileType>1</FileType>
               <FilePath>..\Core\BasicDataStructure\queue.c</FilePath>
             </File>
+            <File>
+              <FileName>linearlist.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\BasicDataStructure\linearlist.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

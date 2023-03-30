@@ -1,5 +1,6 @@
 #ifndef _HAL_RTOS_MES_QUEUE
 #define _HAL_RTOS_MES_QUEUE
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -13,13 +14,15 @@ extern "C"
 #define QUEUE_LEN 64
 
   typedef struct queue_node queue_node_t;
+  typedef enum queue_tag queue_tag_t;
 
-  typedef enum queue_tag
+  enum queue_tag
   {
     motor_tag = 0x00,
     bmp_tag = 0x01,
+    uart_2 = 0x02,
     other_tag = 0xff,
-  } queue_tag_t;
+  };
 
   typedef enum
   {

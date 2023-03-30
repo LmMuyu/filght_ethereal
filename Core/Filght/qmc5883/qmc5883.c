@@ -12,19 +12,19 @@ qmc_uart_rx_t instance_rx;
 
 void vTaskCode(void *pvParameters)
 {
-  Hal_Write_Buf("vTaskCode\n");
-  Hal_SendData();
-
-  Gps_Uart();
+  Gps_Uart_Init();
 
   while (1)
   {
-    /* code */
+    HAL_UART_Transmit(instance_rx.huart, (uint8_t *)"vTaskcode", 10, 1000);
+
+    vTaskDelay(pdMS_TO_TICKS(1000));
   }
 }
 
 void Gps_Uart_Init()
 {
+  Enable_Pin();
 
   UART_InitTypeDef huart2 = {
       .BaudRate = 9600,
@@ -55,7 +55,6 @@ void Gps_Uart_Init()
     Error_Handler();
   }
 
-  Enable_Pin();
   HAL_UART_Receive_IT(instance_rx.huart, &(instance_rx.rx_pdata[instance_rx.index]), 1);
 }
 
@@ -89,16 +88,14 @@ void qmc5883l_handle()
   Hal_Write_Buf("qmc5883l_handle\n");
   Hal_SendData();
 
-  Gps_Uart_Init();
-
-  // xQmc_Handle = xTaskCreateStatic(
-  //     vTaskCode,             /* Function that implements the task. */
-  //     "qmc5883",             /* Text name for the task. */
-  //     STACK_SIZE,            /* Number of indexes in the xStack array. */
-  //     NULL,                  /* Parameter passed into the task. */
-  //     Task_Priority_Level_8, /* Priority at which the task is created. */
-  //     xStack,                /* Array to use as the task's stack. */
-  //     &xTaskBuffer);         /* Variable to hold the task's data structure. */
+  xQmc_Handle = xTaskCreateStatic(
+      vTaskCode,             /* Function that implements the task. */
+      "qmc5883",             /* Text name for the task. */
+      STACK_SIZE,            /* Number of indexes in the xStack array. */
+      NULL,                  /* Parameter passed into the task. */
+      Task_Priority_Level_8, /* Priority at which the task is created. */
+      xStack,                /* Array to use as the task's stack. */
+      &xTaskBuffer);         /* Variable to hold the task's data structure. */
 }
 
 void USART2_IRQHandler()

@@ -18,8 +18,8 @@ extern "C"
     float init_height;
     float curr_height;
     float fiexd_height;
-    int32_t max_up;
-    int32_t min_dn;
+    float max_up;
+    float min_dn;
 
     void (*Filght_Mode_Init)(filght_mode_t *mode, state_t *init_state);
     void (*Land)(filght_mode_t *filght_mode);

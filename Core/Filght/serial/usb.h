@@ -12,6 +12,7 @@ extern "C"
 #include "usb_mode.h"
 #include "common.h"
 #include "stdbool.h"
+#include "mitt.h"
 
 #define MAX_BUFFER_SIZE 1024
 
@@ -50,6 +51,7 @@ extern "C"
   extern usart_methdos_t *serial;
   extern bool isCreateSerial;
   extern rx_struct_t rx_instance;
+  extern mitt_t mitter;
 
   void MX_USART1_UART_Init(void);
 

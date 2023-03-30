@@ -9,6 +9,7 @@ rx_struct_t rx_instance = {
     .max_size = Rx_Max_Size,
     .frame = 0,
 };
+mitt_t mitter;
 
 void USART1_IRQHandler();
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
@@ -41,6 +42,7 @@ usart_methdos_t *Hal_Struct_Uart_Init(void)
     HAL_NVIC_SetPriority(USART1_IRQn, 1, 1);
 
     HAL_UART_Receive_IT(&uart1, &rx_instance.rx_store[rx_instance.frame], 1);
+    mitter = Mitter_Bus(5);
 
     return serial;
   }
@@ -187,5 +189,18 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
     Rx_Clear_Lists(&rx_instance, data);
     UART_Start_Receive_IT(huart, &rx_instance.rx_store[rx_instance.frame], 1);
+  }
+  else if (huart->Instance == USART2)
+  {
+    Hal_Write_Buf("USART2\r\n");
+    Hal_SendData();
+
+    arg_pdata_t arg = {
+        .key = (elementType)uart_2,
+    };
+
+    mitter->mitt_emit(mitter, uart_2, arg);
+
+    free(&arg);
   }
 }
