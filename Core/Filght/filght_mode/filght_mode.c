@@ -21,7 +21,7 @@ filght_mode_t *State_Machine()
 
   fixed_h_mode = New_Fixed_Height_Mode(&filght_mode);
   // 默认状态
-  filght_mode.state = &fixed_h_mode->state;
+  filght_mode.state = fixed_h_mode->state;
 
   return &filght_mode;
 }

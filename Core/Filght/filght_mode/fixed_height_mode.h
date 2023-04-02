@@ -23,7 +23,7 @@ extern "C"
   fixed_h_m_t *New_Fixed_Height_Mode(filght_mode_t *ctx);
 
   extern pid_t fixed_height_pid;
-  extern volatile pid_c_t pid_value;
+  extern pid_c_t pid_value;
 
 #ifdef __cplusplus
 }

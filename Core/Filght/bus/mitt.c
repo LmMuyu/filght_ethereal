@@ -3,8 +3,10 @@
 void mitt_on(mitter_t *mitt, queue_tag_t tag, Mitt_CallBack callbackFn);
 void mitt_off(mitter_t *mitt, queue_tag_t tag, Mitt_CallBack callbackFn);
 void mitt_emit(mitter_t *mitt, queue_tag_t tag, arg_pdata_t arg);
+bool mitt_find(mitter_t *mitt, mitt_node_t *reac_node, elementType tag);
+void mitt_node_set(mitter_t *mitt, mitt_node_t *node);
 
-// void OutputCallBackFn(LinearType *pdata, uint32_t index, LinearType *lists);
+char pdata_mitt[32];
 
 mitt_t Mitter_Bus(uint32_t mitt_len)
 {
@@ -16,35 +18,29 @@ mitt_t Mitter_Bus(uint32_t mitt_len)
       .mitt_on = mitt_on,
   };
 
-  mitt.mitt = calloc(mitt_len, sizeof(mitter_t) * mitt_len);
+  mitt.mitt_nodes = calloc(5, sizeof(mitt_node_t));
+  mitt.size_max = 5;
 
   return &mitt;
 }
 
 void mitt_on(mitter_t *mitt, queue_tag_t tag, Mitt_CallBack callbackFn)
 {
-  bool flag = false;
+  volatile bool flag = false;
   mitt_node_t *node;
 
-  for (size_t i = 0; i < mitt->index; i++)
-  {
-    if (mitt->mitt[i].key == (elementType)tag)
-    {
-      flag = true;
+  flag = mitt_find(mitt, node, (elementType)tag);
+  flag && (node->mitter_event->set(node->mitter_event, (LinearType *)callbackFn, node->mitter_event->index));
 
-      node = mitt->mitt + i;
-      node->mitter_event->set(node->mitter_event, (LinearType *)callbackFn, node->mitter_event->index);
-    }
-  }
-
-  if (flag)
+  if (!flag)
   {
     static mitt_node_t new_node;
     new_node.index = 0;
     new_node.key = (elementType)tag;
-    new_node.mitter_event = Create_LinearList(5);
+    new_node.mitter_event = Create_LinearList(sizeof(Mitt_CallBack) * 5);
     new_node.mitter_event->set(new_node.mitter_event, (LinearType *)callbackFn, 0);
-    mitt->index += 1;
+
+    mitt_node_set(mitt, &new_node);
   }
 }
 
@@ -56,12 +52,35 @@ void mitt_emit(mitter_t *mitt, queue_tag_t tag, arg_pdata_t arg)
 {
   for (size_t i = 0; i < mitt->index; i++)
   {
-    if (mitt->mitt[i].key == (elementType)tag)
+    if (mitt->mitt_nodes[i].key == (elementType)tag)
     {
-      for (size_t j = 0; j < mitt->mitt->mitter_event->index; j++)
+      for (size_t j = 0; j < mitt->mitt_nodes[i].mitter_event->index; j++)
       {
-        ((void (*)(arg_pdata_t arg))(mitt->mitt->mitter_event->get(mitt->mitt->mitter_event, j)))(arg);
+        ((void (*)(arg_pdata_t))(mitt->mitt_nodes[i].mitter_event->get(mitt->mitt_nodes[i].mitter_event, j)))(arg);
       }
     }
   }
+}
+
+bool mitt_find(mitter_t *mitt, mitt_node_t *reac_node, elementType tag)
+{
+  for (size_t i = 0; i < mitt->index; i++)
+  {
+    if (mitt->mitt_nodes[i].key == (elementType)tag)
+    {
+      reac_node = mitt->mitt_nodes + i;
+      return true;
+    }
+  }
+
+  return false;
+}
+
+void mitt_node_set(mitter_t *mitt, mitt_node_t *node)
+{
+  if (mitt->index + 1 >= 5)
+    return;
+
+  mitt->mitt_nodes[mitt->index] = *node;
+  mitt->index += 1;
 }

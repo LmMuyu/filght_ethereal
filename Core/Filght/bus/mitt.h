@@ -1,3 +1,7 @@
+#ifdef _MITT_
+typedef struct Mitter *mitt_t;
+#endif
+
 #ifndef _HAL_MITT_H_
 #define _HAL_MITT_H_
 #ifdef __cplusplus
@@ -6,15 +10,12 @@ extern "C"
 #endif
 
 #include "main.h"
-#include "freertos_mes_queue.h"
 #include "stdlib.h"
 #include "string.h"
 #include "linearlist.h"
 #include "stdbool.h"
 #include "usb.h"
-
-#define HEIGHT(node) ((node == NULL) ? 0 : (((avlnode *)(node))->height))
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#include "mes_queue.h"
 
   typedef struct Mitter *mitt_t;
   typedef int elementType;
@@ -38,7 +39,8 @@ extern "C"
 
   typedef struct Mitter
   {
-    mitt_node_t *mitt;
+    mitt_node_t *mitt_nodes;
+    uint32_t size_max;
     uint32_t index;
     void (*mitt_on)(mitt_t mitt, queue_tag_t tag, Mitt_CallBack callbackFn);
     void (*mitt_off)(mitt_t mitt, queue_tag_t tag, Mitt_CallBack callbackFn);

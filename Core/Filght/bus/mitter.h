@@ -1,27 +1,25 @@
-// #ifndef _HHAL_MITTER_H_
-// #define _HHAL_MITTER_H_
-// #ifdef __cplusplus
-// extern "C"
-// {
-// #endif
-// #include "main.h"
-// #include "task.h"
-// #include "mitt.h"
-// #include "FreeRTOS.h"
-// #include "FreeRTOSConfig.h"
-// #include "freertos_task.h"
-// #include "freertos_mes_queue.h"
+#ifndef _HHAL_MITTER_H_
+#define _HHAL_MITTER_H_
 
-// #define Stack_Size configMINIMAL_STACK_SIZE
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+#include "main.h"
 
-//   extern StackType_t xStake[Stack_Size];
-//   extern StaticTask_t Handler_Task;
-//   extern const char *Mitter_Name;
-//   extern TaskHandle_t queue_handle_task;
+#ifndef _MITT_
+#define _MITT_
 
-//   void Queue_Receive_Handle();
+#include "mitt.h"
 
-// #ifdef __cplusplus
-// }
-// #endif
-// #endif
+#endif
+
+  extern mitt_t Mitter_mitt;
+
+  void Mitt_Init();
+  mitt_t Mitt_Get();
+
+#ifdef __cplusplus
+}
+#endif
+#endif

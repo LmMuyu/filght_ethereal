@@ -1,12 +1,15 @@
 #include "linearlist.h"
 
-bool List_Adjust(linearlist_t *list, uint32_t C);
+bool List_Adjust(linearlist_t *list, float C);
 bool empty(linearlist_t *list);
 uint32_t size(linearlist_t *list);
 LinearType get(linearlist_t *list, uint32_t i);
 bool erase(linearlist_t *list, uint32_t i);
 bool set(linearlist_t *list, LinearType *pdata, uint32_t i);
 void foreach (linearlist_t *list, ForEach_CallBack callbackFn);
+LinearType *back(linearlist_t *list); /*返回对向量中最后一个元素的引用*/
+void clear(linearlist_t *list);
+LinearType *back_next(linearlist_t *list);
 
 linearlist_t *Create_LinearList(uint32_t length)
 {
@@ -20,6 +23,9 @@ linearlist_t *Create_LinearList(uint32_t length)
       .index = 0,
       .set = set,
       .size = size,
+      .back = back,
+      .clear = clear,
+      .back_next = back_next,
   };
 
   linearlist.list = list;
@@ -92,7 +98,7 @@ void foreach (linearlist_t *list, ForEach_CallBack callbackFn)
   }
 }
 
-bool List_Adjust(linearlist_t *list, uint32_t C)
+bool List_Adjust(linearlist_t *list, float C)
 {
   const int newLength = (int)((float)list->max_size) * C;
 
@@ -111,4 +117,27 @@ bool List_Adjust(linearlist_t *list, uint32_t C)
   list->max_size = newLength;
 
   return true;
+}
+
+LinearType *back(linearlist_t *list)
+{
+  return list->list + (list->index == 0 ? 0 : list->index - 1);
+}
+
+LinearType *back_next(linearlist_t *list)
+{
+  LinearType *linear_count_ptr = back(list);
+
+  if (list->index == list->max_size)
+  {
+    return linear_count_ptr;
+  }
+
+  return linear_count_ptr + 1;
+}
+
+void clear(linearlist_t *list)
+{
+  memset(list->list, 0x00, list->index);
+  list->index = 0;
 }

@@ -8,8 +8,9 @@
 #include "motor_control.h"
 #include "bmp280_task.h"
 #include "filght_mode.h"
+#include "bn-880.h"
 #include "mitter.h"
-#include "gps.h"
+// #include "qmc5883.h"
 
 int main(void)
 {
@@ -21,10 +22,12 @@ int main(void)
 
   HAL_Delay(7000);
 
+  Mitt_Init();
+
   // Motor_Init();
   // Mpu6050_Task_Handle();
   // Bmp280_Init_Handle_Task();
-  qmc5883l_handle();
+  Bn880_handle();
   // Queue_Receive_Handle();
 
   // filght_mode_t *filght_mode = State_Machine();

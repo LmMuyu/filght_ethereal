@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F303xC</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F3xx_HAL_Driver/Inc;../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F3xx/Include;../Drivers/CMSIS/Include;..\FreeRTOS\Source\include;..\FreeRTOS\Source\CMSIS_RTOS;..\FreeRTOS\Source\portable\GCC\ARM_CM4F;..\Core\Filght\l2c;..\Core\Filght\log;..\Core\Filght\mpu6050;..\Core\Filght\serial;..\Core\Filght\freertos;..\Core\Filght\pwm;..\Core\Filght\hmc5883l;..\Core\Filght\filgh_math;..\Core\Filght\mahony;..\Core\test\vofa;..\Core\BasicDataStructure;..\Core\Filght\motor;..\Core\Filght\bmp;..\Core\Filght\pid;..\Core\Filght\filght_init;..\Core\Filght\filght_mode;..\Core\Filght\bus;..\Core\Filght\gps;..\Core\Filght\qmc5883</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F3xx_HAL_Driver/Inc;../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F3xx/Include;../Drivers/CMSIS/Include;..\FreeRTOS\Source\include;..\FreeRTOS\Source\CMSIS_RTOS;..\FreeRTOS\Source\portable\GCC\ARM_CM4F;..\Core\Filght\l2c;..\Core\Filght\log;..\Core\Filght\mpu6050;..\Core\Filght\serial;..\Core\Filght\freertos;..\Core\Filght\pwm;..\Core\Filght\hmc5883l;..\Core\Filght\filgh_math;..\Core\Filght\mahony;..\Core\test\vofa;..\Core\BasicDataStructure;..\Core\Filght\motor;..\Core\Filght\bmp;..\Core\Filght\pid;..\Core\Filght\filght_init;..\Core\Filght\filght_mode;..\Core\Filght\bus;..\Core\Filght\qmc5883;..\Core\Filght\bn-880</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -524,6 +524,11 @@
               <FilePath>..\Core\Filght\filght_mode\state.c</FilePath>
             </File>
             <File>
+              <FileName>qmc5883.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Filght\qmc5883\qmc5883.c</FilePath>
+            </File>
+            <File>
               <FileName>mitt.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Core\Filght\bus\mitt.c</FilePath>
@@ -534,14 +539,14 @@
               <FilePath>..\Core\Filght\bus\mitter.c</FilePath>
             </File>
             <File>
-              <FileName>gps.c</FileName>
+              <FileName>bn-880.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Core\Filght\gps\gps.c</FilePath>
+              <FilePath>..\Core\Filght\bn-880\bn-880.c</FilePath>
             </File>
             <File>
-              <FileName>qmc5883.c</FileName>
+              <FileName>bn-880-methods.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Core\Filght\qmc5883\qmc5883.c</FilePath>
+              <FilePath>..\Core\Filght\bn-880\bn-880-methods.c</FilePath>
             </File>
           </Files>
         </Group>

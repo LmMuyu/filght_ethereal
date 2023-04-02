@@ -27,6 +27,9 @@ extern "C"
     bool (*erase)(linearlist_t *list, uint32_t i);
     bool (*set)(linearlist_t *list, LinearType *pdata, uint32_t i);
     void (*foreach)(linearlist_t *list, ForEach_CallBack callbackFn);
+    LinearType *(*back)(linearlist_t *list);      /*返回对向量中最后一个元素的引用*/
+    LinearType *(*back_next)(linearlist_t *list); /*返回对向量中最后一个元素的下一个引用*/
+    void (*clear)(linearlist_t *list);            /*清空线性表*/
   };
 
   linearlist_t *Create_LinearList(uint32_t length);

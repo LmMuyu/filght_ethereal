@@ -1,39 +1,13 @@
 #include "mitter.h"
 
-// void Task_Run_Fnction(void *args);
+mitt_t Mitter_mitt;
 
-// StackType_t xStake[Stack_Size];
-// StaticTask_t Handler_Task;
-// TaskHandle_t queue_handle_task;
+void Mitt_Init()
+{
+  Mitter_mitt = Mitter_Bus(5);
+}
 
-// const char *Mitter_Name = "Receive_queue";
-
-// void Queue_Receive_Handle()
-// {
-//   queue_handle_task = xTaskCreateStatic(Task_Run_Fnction, Mitter_Name, Stack_Size, NULL, Task_Priority_Level_10, xStake, &Handler_Task);
-
-//   if (queue_handle_task == NULL)
-//   {
-//     Error_Handler();
-//   }
-// }
-
-// void Task_Run_Fnction(void *args)
-// {
-//   queue_node_t *node;
-
-//   New_Mes_Queue();
-//   mitt_t mitt = Mitter_Bus();
-
-//   while (1)
-//   {
-//     queue_rec_state_t state = Queue_Receive(node);
-
-//     if (state == REC_OK)
-//     {
-//       mitt->mitt_emit(node->tag, node);
-//     }
-
-//     vTaskDelay(pdMS_TO_TICKS(15));
-//   }
-// }
+mitt_t Mitt_Get()
+{
+  return Mitter_mitt;
+}

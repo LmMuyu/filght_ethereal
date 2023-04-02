@@ -7,7 +7,7 @@ static void Filght(filght_mode_t *ctx);
 char pdata[64];
 
 pid_t fixed_height_pid;
-volatile pid_c_t pid_value = {
+pid_c_t pid_value = {
     .D = 0.05,
     .I = 0.01,
     .P = 0.001,

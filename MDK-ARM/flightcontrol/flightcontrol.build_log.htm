@@ -22,61 +22,27 @@ Dialog DLL:      TARMSTM.DLL V1.66.0.0
  
 <h2>Project:</h2>
 D:\keilc51Project\flightcontrol_f303cc\flightcontrol\MDK-ARM\flightcontrol.uvprojx
-Project File Date:  03/28/2023
+Project File Date:  04/02/2023
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.16', folder: 'D:\MDK-keil5\ARM\ARMCLANG\Bin'
 Build target 'flightcontrol'
 Note: source file '..\Core\BasicDataStructure\queue.c' - object file renamed from 'flightcontrol\queue.o' to 'flightcontrol\queue_1.o'.
-../Core/Filght/freertos/freertos_mes_queue.c(1): warning: In file included from...
-../Core/Filght/freertos\freertos_mes_queue.h(8): warning: In file included from...
-../Core/Inc\main.h(33): warning: In file included from...
-../Core/Filght/freertos\freertos_task.h(12): warning: In file included from...
-../Core/Filght/serial/usb.h(15): warning: In file included from...
-../Core/Filght/bus\mitt.h(43): error: unknown type name 'queue_tag_t'
-    void (*mitt_on)(mitt_t mitt, queue_tag_t tag, Mitt_CallBack callbackFn);
-                                 ^
-../Core/Filght/bus\mitt.h(44): error: unknown type name 'queue_tag_t'
-    void (*mitt_off)(mitt_t mitt, queue_tag_t tag, Mitt_CallBack callbackFn);
-                                  ^
-../Core/Filght/bus\mitt.h(45): error: unknown type name 'queue_tag_t'
-    void (*mitt_emit)(mitt_t mitt, queue_tag_t tag, arg_pdata_t arg);
-                                   ^
-3 errors generated.
-compiling freertos_mes_queue.c...
-../Core/Filght/bus/mitt.c(1): warning: In file included from...
-../Core/Filght/bus\mitt.h(8): warning: In file included from...
-../Core/Inc\main.h(33): warning: In file included from...
-../Core/Filght/freertos\freertos_task.h(12): warning: In file included from...
-../Core/Filght/serial/usb.h(54): error: unknown type name 'mitt_t'; did you mean 'List_t'?
-  extern mitt_t mitter;
-         ^~~~~~
-         List_t
-../FreeRTOS/Source/include/list.h(170): note: 'List_t' declared here
-} List_t;
-  ^
-1 error generated.
-compiling mitt.c...
-compiling state.c...
-../Core/Src/main.c(27): warning: implicit declaration of function 'qmc5883l_handle' is invalid in C99 [-Wimplicit-function-declaration]
-  qmc5883l_handle();
-  ^
+compiling bn-880-methods.c...
+../Core/Src/main.c(11): warning: In file included from...
+../Core/Filght/bn-880\bn-880.h(20): warning: 'STACK_SIZE' macro redefined [-Wmacro-redefined]
+#define STACK_SIZE configMINIMAL_STACK_SIZE
+        ^
+../Core/Filght/mpu6050\mpu6050.h(91): note: previous definition is here
+#define STACK_SIZE 512
+        ^
 1 warning generated.
 compiling main.c...
-../Core/Filght/filght_mode/filght_mode.c(24): warning: incompatible pointer types assigning to 'state_t *' (aka 'struct State *') from 'state_t **' (aka 'struct State **'); remove & [-Wincompatible-pointer-types]
-  filght_mode.state = &fixed_h_mode->state;
-                    ^ ~~~~~~~~~~~~~~~~~~~~
-1 warning generated.
-compiling filght_mode.c...
-../Core/Filght/filght_mode/fixed_height_mode.c(53): warning: passing 'volatile pid_c_t *' (aka 'volatile struct PID_Coefficient *') to parameter of type 'pid_c_t *' (aka 'struct PID_Coefficient *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
-  const float pid_v = Pid_Incremental(&fixed_height_pid, &pid_value);
-                                                         ^~~~~~~~~~
-../Core/Filght/pid\pid.h(40): note: passing argument to parameter 'pid_codf' here
-  float Pid_Incremental(pid_t *pid_example, pid_c_t *pid_codf);
-                                                     ^
-1 warning generated.
-compiling fixed_height_mode.c...
-"flightcontrol\flightcontrol.axf" - 4 Error(s), 3 Warning(s).
+compiling bn-880.c...
+linking...
+Program Size: Code=16716 RO-data=532 RW-data=648 ZI-data=3400  
+FromELF: creating hex file...
+"flightcontrol\flightcontrol.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -99,7 +65,6 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.5.0
-Target not created.
 Build Time Elapsed:  00:00:01
 </pre>
 </body>

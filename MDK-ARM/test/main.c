@@ -10,6 +10,7 @@
 typedef int LinearType;
 typedef void (*ForEach_CallBack)(LinearType *pdata, uint32_t index, LinearType *lists);
 typedef struct linearlist linearlist_t;
+typedef void (*func_t)();
 
 struct linearlist
 {
@@ -23,6 +24,13 @@ struct linearlist
   bool (*set)(linearlist_t *list, LinearType *pdata, uint32_t i);
   void (*foreach)(linearlist_t *list, ForEach_CallBack callbackFn);
 };
+
+typedef struct BASE_STRUCT
+{
+  float max;
+  float pos_x;
+  float pos_y;
+} base_t;
 
 linearlist_t *Create_LinearList(uint32_t length);
 
@@ -38,16 +46,15 @@ linearlist_t *Create_LinearList(uint32_t length)
 {
   LinearType *list = (LinearType *)malloc(sizeof(LinearType) * length);
 
-  static linearlist_t linearlist = {
-      .empty = empty,
-      .erase = erase,
-      .foreach = foreach,
-      .get = get,
-      .index = 0,
-      .set = set,
-      .size = size,
-  };
+  static linearlist_t linearlist = {0};
 
+  linearlist.empty = empty,
+  linearlist.erase = erase,
+  linearlist.foreach = foreach,
+  linearlist.get = get,
+  linearlist.index = 0,
+  linearlist.set = set,
+  linearlist.size = size,
   linearlist.list = list;
   linearlist.max_size = length;
 
@@ -104,7 +111,7 @@ bool set(linearlist_t *list, LinearType *pdata, uint32_t i)
     }
   }
 
-  list->list[i] = (LinearType)pdata;
+  list->list[i] = (LinearType)(pdata);
   list->index += 1;
 
   return true;
@@ -146,17 +153,11 @@ void func()
 
 int main(int argc, char const *argv[])
 {
+  linearlist_t *list = Create_LinearList(sizeof(int) * 5);
 
-  linearlist_t *list = Create_LinearList(5);
+  list->set(list, (LinearType *)"abdw", 0);
 
-  list->set(list, (LinearType *)func, list->size(list));
-
-  ((void (*)())(list->get(list, 0)))();
-
-  while (1)
-  {
-    /* code */
-  }
+  printf("%s\n", (char *)list->get(list, 0));
 
   return 0;
 }

@@ -1,6 +1,4 @@
 #include "usb.h"
-#include "string.h"
-#include "stdio.h"
 
 UART_HandleTypeDef uart1;
 usart_methdos_t *serial;
@@ -9,9 +7,9 @@ rx_struct_t rx_instance = {
     .max_size = Rx_Max_Size,
     .frame = 0,
 };
-mitt_t mitter;
 
 void USART1_IRQHandler();
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 
 usart_methdos_t *Hal_Struct_Uart_Init(void)
@@ -40,9 +38,7 @@ usart_methdos_t *Hal_Struct_Uart_Init(void)
 
     HAL_NVIC_EnableIRQ(USART1_IRQn);
     HAL_NVIC_SetPriority(USART1_IRQn, 1, 1);
-
     HAL_UART_Receive_IT(&uart1, &rx_instance.rx_store[rx_instance.frame], 1);
-    mitter = Mitter_Bus(5);
 
     return serial;
   }
@@ -81,7 +77,6 @@ void Hal_SendData(void)
 
 huart_error_t Hal_Insert_Data(char *data, uint16_t pos)
 {
-
   return UART_OK;
 }
 
@@ -160,7 +155,6 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
     PA10     ------> USART1_RX
     */
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_9 | GPIO_PIN_10);
-    HAL_DMA_DeInit(uartHandle->hdmatx);
   }
 }
 
@@ -181,9 +175,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
     if (rx_instance.frame == 1 && data == DFU_FLAG)
     {
-      Hal_Write_Buf("dfu ok\r\n");
-      Hal_SendData();
-
       Enter_Dfu();
     }
 
@@ -192,15 +183,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   }
   else if (huart->Instance == USART2)
   {
-    Hal_Write_Buf("USART2\r\n");
-    Hal_SendData();
-
     arg_pdata_t arg = {
-        .key = (elementType)uart_2,
+        .key = (elementType)UART_2_TAG,
     };
 
-    mitter->mitt_emit(mitter, uart_2, arg);
-
-    free(&arg);
+    Mitt_Get()->mitt_emit(Mitt_Get(), UART_2_TAG, arg);
   }
 }
