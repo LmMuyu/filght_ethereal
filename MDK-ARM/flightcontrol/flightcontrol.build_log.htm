@@ -28,19 +28,19 @@ Project File Date:  04/02/2023
 *** Using Compiler 'V6.16', folder: 'D:\MDK-keil5\ARM\ARMCLANG\Bin'
 Build target 'flightcontrol'
 Note: source file '..\Core\BasicDataStructure\queue.c' - object file renamed from 'flightcontrol\queue.o' to 'flightcontrol\queue_1.o'.
-compiling bn-880-methods.c...
 ../Core/Src/main.c(11): warning: In file included from...
-../Core/Filght/bn-880\bn-880.h(20): warning: 'STACK_SIZE' macro redefined [-Wmacro-redefined]
-#define STACK_SIZE configMINIMAL_STACK_SIZE
+../Core/Filght/bn-880\bn-880.h(23): warning: 'STACK_SIZE' macro redefined [-Wmacro-redefined]
+#define STACK_SIZE 128
         ^
 ../Core/Filght/mpu6050\mpu6050.h(91): note: previous definition is here
 #define STACK_SIZE 512
         ^
 1 warning generated.
 compiling main.c...
+compiling bn-880-methods.c...
 compiling bn-880.c...
 linking...
-Program Size: Code=16716 RO-data=532 RW-data=648 ZI-data=3400  
+Program Size: Code=16660 RO-data=532 RW-data=648 ZI-data=3456  
 FromELF: creating hex file...
 "flightcontrol\flightcontrol.axf" - 0 Error(s), 1 Warning(s).
 

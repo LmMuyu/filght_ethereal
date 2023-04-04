@@ -5,23 +5,14 @@ void Enable_Uart_Pin();
 void USART2_IRQHandler();
 void Bn880_RxUart_CallBack(arg_pdata_t arg);
 
-StaticTask_t xTaskBuffer;
-StackType_t xStack[STACK_SIZE];
-TaskHandle_t xQmc_Handle = NULL;
 bn_uart_pdata_rx_t bn880_pdata_rx;
+gps_struct_ptr gps_pdata;
 
-void vTaskCode(void *pvParameters)
+void vTaskCode()
 {
   Gps_Uart_Init();
-
+  gps_pdata = Create_Gps_Parser_Struct();
   Mitt_Get()->mitt_on(Mitt_Get(), UART_2_TAG, Bn880_RxUart_CallBack);
-
-  while (1)
-  {
-    HAL_UART_Transmit(bn880_pdata_rx.huart, (uint8_t *)"vTaskcode", 10, 1000);
-
-    vTaskDelay(pdMS_TO_TICKS(1000));
-  }
 }
 
 void Gps_Uart_Init()
@@ -48,6 +39,7 @@ void Gps_Uart_Init()
 
   huart_handler.Init = huart2;
   bn880_pdata_rx.huart = &huart_handler;
+  bn880_pdata_rx.tmp = calloc(1, sizeof(char));
 
   HAL_NVIC_EnableIRQ(USART2_IRQn);
   HAL_NVIC_SetPriority(USART2_IRQn, 2, 2);
@@ -57,7 +49,7 @@ void Gps_Uart_Init()
     Error_Handler();
   }
 
-  HAL_UART_Receive_IT(bn880_pdata_rx.huart, &(bn880_pdata_rx.rx_pdata[bn880_pdata_rx.index]), 1);
+  HAL_UART_Receive_IT(bn880_pdata_rx.huart, bn880_pdata_rx.tmp, 1);
 }
 
 void Enable_Uart_Pin()
@@ -87,14 +79,7 @@ void Enable_Uart_Pin()
 
 void Bn880_handle()
 {
-  xQmc_Handle = xTaskCreateStatic(
-      vTaskCode,             /* Function that implements the task. */
-      "bn880",               /* Text name for the task. */
-      STACK_SIZE,            /* Number of indexes in the xStack array. */
-      NULL,                  /* Parameter passed into the task. */
-      Task_Priority_Level_8, /* Priority at which the task is created. */
-      xStack,                /* Array to use as the task's stack. */
-      &xTaskBuffer);         /* Variable to hold the task's data structure. */
+  vTaskCode();
 }
 
 void USART2_IRQHandler()
@@ -102,14 +87,22 @@ void USART2_IRQHandler()
   HAL_UART_IRQHandler(bn880_pdata_rx.huart);
 }
 
-char pdata_bn[32];
-
 void Bn880_RxUart_CallBack(arg_pdata_t arg)
 {
-  // instance_rx.index += 1;
-  HAL_UART_Receive_IT(bn880_pdata_rx.huart, &(bn880_pdata_rx.rx_pdata[bn880_pdata_rx.index]), 1);
+  bool flag = gps_pdata->Gs_Parser(gps_pdata, *bn880_pdata_rx.tmp);
 
-  sprintf(pdata_bn, " gps_info:%s\n", (char *)bn880_pdata_rx.rx_pdata);
-  Hal_Write_Buf(pdata_bn);
-  Hal_SendData();
+  char *pdata_bn_pdata = calloc(128, sizeof(char));
+
+  if (flag)
+  {
+    sprintf(pdata_bn_pdata, "%s\n", (char *)gps_pdata->gps_pdata);
+    Hal_Write_Buf(pdata_bn_pdata);
+    Hal_SendData();
+
+    gps_pdata->clear(gps_pdata);
+  }
+
+  free(pdata_bn_pdata);
+  memset(bn880_pdata_rx.tmp, 0x00, 1);
+  HAL_UART_Receive_IT(bn880_pdata_rx.huart, bn880_pdata_rx.tmp, 1);
 }

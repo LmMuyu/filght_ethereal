@@ -133,7 +133,7 @@ LinearType *back_next(linearlist_t *list)
     return linear_count_ptr;
   }
 
-  return linear_count_ptr + 1;
+  return linear_count_ptr + (list->index == 0 ? 0 : 1);
 }
 
 void clear(linearlist_t *list)
