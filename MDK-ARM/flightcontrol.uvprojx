@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F303xC</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F3xx_HAL_Driver/Inc;../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F3xx/Include;../Drivers/CMSIS/Include;..\FreeRTOS\Source\include;..\FreeRTOS\Source\CMSIS_RTOS;..\FreeRTOS\Source\portable\GCC\ARM_CM4F;..\Core\Filght\l2c;..\Core\Filght\log;..\Core\Filght\mpu6050;..\Core\Filght\serial;..\Core\Filght\freertos;..\Core\Filght\pwm;..\Core\Filght\hmc5883l;..\Core\Filght\filgh_math;..\Core\Filght\mahony;..\Core\test\vofa;..\Core\BasicDataStructure;..\Core\Filght\motor;..\Core\Filght\bmp;..\Core\Filght\pid;..\Core\Filght\filght_init;..\Core\Filght\filght_mode;..\Core\Filght\bus;..\Core\Filght\qmc5883;..\Core\Filght\bn-880</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F3xx_HAL_Driver/Inc;../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F3xx/Include;../Drivers/CMSIS/Include;..\FreeRTOS\Source\include;..\FreeRTOS\Source\CMSIS_RTOS;..\FreeRTOS\Source\portable\GCC\ARM_CM4F;..\Core\Filght\l2c;..\Core\Filght\log;..\Core\Filght\mpu6050;..\Core\Filght\serial;..\Core\Filght\freertos;..\Core\Filght\pwm;..\Core\Filght\hmc5883l;..\Core\Filght\filgh_math;..\Core\Filght\mahony;..\Core\test\vofa;..\Core\BasicDataStructure;..\Core\Filght\motor;..\Core\Filght\bmp;..\Core\Filght\pid;..\Core\Filght\filght_init;..\Core\Filght\filght_mode;..\Core\Filght\bus;..\Core\Filght\qmc5883;..\Core\Filght\bn-880;..\Core\Filght\sbus</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -547,6 +547,21 @@
               <FileName>bn-880-methods.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Core\Filght\bn-880\bn-880-methods.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_qmc5883.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Filght\qmc5883\hal_qmc5883.c</FilePath>
+            </File>
+            <File>
+              <FileName>s_bus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Filght\sbus\s_bus.c</FilePath>
+            </File>
+            <File>
+              <FileName>s_bus_parser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Filght\sbus\s_bus_parser.c</FilePath>
             </File>
           </Files>
         </Group>
