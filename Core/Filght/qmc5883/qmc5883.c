@@ -1,113 +1,159 @@
 #include "qmc5883.h"
 
-// void Gps_Uart_Init();
-// void Enable_Pin();
-// // void RxCpltCallback(struct __UART_HandleTypeDef *huart);
-// void USART2_IRQHandler();
+i2c_instance_methods_t *i2c_explse;
 
-// StaticTask_t xTaskBuffer;
-// StackType_t xStack[STACK_SIZE];
-// TaskHandle_t xQmc_Handle = NULL;
-// qmc_uart_rx_t instance_rx;
+uint8_t QMC5883L_Read_Reg(uint8_t reg)
+{
+  uint8_t Buffer[1];
+  HAL_I2C_Mem_Read(i2c_explse->i2c_example->hi2c, QMC5883L_ADDRESS, reg, 1, Buffer, 1, 10);
+  return Buffer[0];
+}
 
-// void vTaskCode(void *pvParameters)
-// {
-//   Gps_Uart_Init();
+void QMC5883L_Write_Reg(uint8_t reg, uint8_t data)
+{
+  uint8_t Buffer[2] = {reg, data};
+  HAL_I2C_Master_Transmit(i2c_explse->i2c_example->hi2c, QMC5883L_ADDRESS, Buffer, 2, 10);
+}
 
-//   while (1)
-//   {
-//     HAL_UART_Transmit(instance_rx.huart, (uint8_t *)"vTaskcode", 10, 1000);
+void QMC5883L_Read_Data(int16_t *MagX, int16_t *MagY, int16_t *MagZ) // (-32768 / +32768)
+{
+  *MagX = ((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_X_LSB) | (((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_X_MSB)) << 8));
+  *MagY = ((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_Y_LSB) | (((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_Y_MSB)) << 8));
+  *MagZ = ((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_Z_LSB) | (((int16_t)QMC5883L_Read_Reg(QMC5883L_DATA_READ_Z_MSB)) << 8));
+}
 
-//     vTaskDelay(pdMS_TO_TICKS(1000));
-//   }
-// }
+int16_t QMC5883L_Read_Temperature()
+{
+  return (((int16_t)QMC5883L_Read_Reg(QMC5883L_TEMP_READ_LSB)) | (((int16_t)QMC5883L_Read_Reg(QMC5883L_TEMP_READ_MSB)) << 8)) / 100;
+}
 
-// void Gps_Uart_Init()
-// {
-//   Enable_Pin();
+void QMC5883L_Initialize(_qmc5883l_MODE MODE, _qmc5883l_ODR ODR, _qmc5883l_RNG RNG, _qmc5883l_OSR OSR)
+{
+  i2c_explse = I2c_CreateMethods();
 
-//   UART_InitTypeDef huart2 = {
-//       .BaudRate = 9600,
-//       .Mode = UART_MODE_TX_RX,
-//       .Parity = UART_PARITY_NONE,
-//       .StopBits = UART_STOPBITS_1,
-//       .HwFlowCtl = UART_HWCONTROL_NONE,
-//       .WordLength = UART_WORDLENGTH_8B,
-//       .OverSampling = UART_OVERSAMPLING_16,
-//       .OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE,
-//   };
+  QMC5883L_Write_Reg(QMC5883L_CONFIG_3, 0x01);
+  QMC5883L_Write_Reg(QMC5883L_CONFIG_1, MODE | ODR | RNG | OSR);
+}
 
-//   static UART_HandleTypeDef huart_handler = {
-//       .Instance = USART2,
-//       .AdvancedInit = {
-//           .AdvFeatureInit = UART_ADVFEATURE_NO_INIT,
-//       },
-//   };
+void QMC5883L_Reset()
+{
+  QMC5883L_Write_Reg(QMC5883L_CONFIG_2, 0x81);
+}
 
-//   huart_handler.Init = huart2;
-//   instance_rx.huart = &huart_handler;
+void QMC5883L_InterruptConfig(_qmc5883l_INT INT)
+{
+  if (INT == INTERRUPT_ENABLE)
+  {
+    QMC5883L_Write_Reg(QMC5883L_CONFIG_2, 0x00);
+  }
+  else
+  {
+    QMC5883L_Write_Reg(QMC5883L_CONFIG_2, 0x01);
+  }
+}
 
-//   HAL_NVIC_EnableIRQ(USART2_IRQn);
-//   HAL_NVIC_SetPriority(USART2_IRQn, 2, 2);
+_qmc5883l_status QMC5883L_DataIsReady()
+{
+  uint8_t Buffer = QMC5883L_Read_Reg(QMC5883L_STATUS);
+  if ((Buffer & 0x00) == 0x00)
+  {
+    return NO_NEW_DATA;
+  }
+  else if ((Buffer & 0x01) == 0X01)
+  {
+    return NEW_DATA_IS_READY;
+  }
+  return NORMAL;
+}
 
-//   if (HAL_UART_Init(&huart_handler) != HAL_OK)
-//   {
-//     Error_Handler();
-//   }
+_qmc5883l_status QMC5883L_DataIsSkipped()
+{
+  uint8_t Buffer = QMC5883L_Read_Reg(QMC5883L_STATUS);
+  if ((Buffer & 0x00) == 0X00)
+  {
+    return NORMAL;
+  }
+  else if ((Buffer & 0x04) == 0X04)
+  {
+    return DATA_SKIPPED_FOR_READING;
+  }
+  return NORMAL;
+}
 
-//   HAL_UART_Receive_IT(instance_rx.huart, &(instance_rx.rx_pdata[instance_rx.index]), 1);
-// }
+_qmc5883l_status QMC5883L_DataIsOverflow()
+{
+  uint8_t Buffer = QMC5883L_Read_Reg(QMC5883L_STATUS);
+  if ((Buffer & 0x00) == 0X00)
+  {
+    return NORMAL;
+  }
+  else if ((Buffer & 0x02) == 0X02)
+  {
+    return DATA_OVERFLOW;
+  }
+  return NORMAL;
+}
 
-// void Enable_Pin()
-// {
-//   __HAL_RCC_GPIOA_CLK_ENABLE();
-//   __HAL_RCC_USART2_CLK_ENABLE();
+void QMC5883L_ResetCalibration()
+{
+  Xmin = Xmax = Ymin = Ymax = 0;
+}
 
-//   GPIO_InitTypeDef hgpio = {
-//       .Pin = GPS_RX | GPS_TX,
-//       .Pull = GPIO_NOPULL,
-//       .Mode = GPIO_MODE_AF_PP,
-//       .Speed = GPIO_SPEED_FREQ_HIGH,
-//       .Alternate = GPIO_AF7_USART2,
-//   };
+float QMC5883L_Heading(int16_t Xraw, int16_t Yraw, int16_t Zraw)
+{
+  float X = Xraw, Y = Yraw, Z = Zraw;
+  float Heading;
 
-//   GPIO_InitTypeDef swd;
-//   swd.Pin = GPIO_PIN_13 | GPIO_PIN_14;
-//   swd.Mode = GPIO_MODE_OUTPUT_PP;
-//   swd.Pull = GPIO_NOPULL;
-//   swd.Speed = GPIO_SPEED_FREQ_HIGH;
+  if (X < Xmin)
+  {
+    Xmin = X;
+  }
+  else if (X > Xmax)
+  {
+    Xmax = X;
+  }
 
-//   HAL_GPIO_Init(GPIOA, &swd);
-//   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_13 | GPIO_PIN_14, GPIO_PIN_RESET);
+  if (Y < Ymin)
+  {
+    Ymin = Y;
+  }
+  else if (Y > Ymax)
+  {
+    Ymax = Y;
+  }
 
-//   HAL_GPIO_Init(GPS_GPIO_REG, &hgpio);
-// }
+  if (Xmin == Xmax || Ymin == Ymax)
+  {
+    return 0.0;
+  }
 
-// void qmc5883l_handle()
-// {
-//   Hal_Write_Buf("qmc5883l_handle\n");
-//   Hal_SendData();
+  X -= (Xmax + Xmin) / 2;
+  Y -= (Ymax + Ymin) / 2;
 
-//   xQmc_Handle = xTaskCreateStatic(
-//       vTaskCode,             /* Function that implements the task. */
-//       "qmc5883",             /* Text name for the task. */
-//       STACK_SIZE,            /* Number of indexes in the xStack array. */
-//       NULL,                  /* Parameter passed into the task. */
-//       Task_Priority_Level_8, /* Priority at which the task is created. */
-//       xStack,                /* Array to use as the task's stack. */
-//       &xTaskBuffer);         /* Variable to hold the task's data structure. */
-// }
+  X = X / (Xmax - Xmin);
+  Y = Y / (Ymax - Ymin);
 
-// void USART2_IRQHandler()
-// {
-//   Hal_Write_Buf("RxCpltCallback\n");
-//   Hal_SendData();
+  Heading = atan2(Y, X);
+  // EAST
+  Heading += QMC5883L_DECLINATION_ANGLE;
+  // WEST
+  // Heading -= QMC5883L_DECLINATION_ANGLE;
 
-//   HAL_UART_IRQHandler(instance_rx.huart);
+  if (Heading < 0)
+  {
+    Heading += 2 * M_PI;
+  }
+  else if (Heading > 2 * M_PI)
+  {
+    Heading -= 2 * M_PI;
+  }
 
-//   instance_rx.index += 1;
-//   HAL_UART_Receive_IT(instance_rx.huart, &(instance_rx.rx_pdata[instance_rx.index]), 1);
+  return Heading;
+}
 
-//   Hal_Write_Buf("rx\n");
-//   Hal_SendData();
-// }
+void QMC5883L_Scale(int16_t *X, int16_t *Y, int16_t *Z)
+{
+  *X *= QMC5883L_SCALE_FACTOR;
+  *Y *= QMC5883L_SCALE_FACTOR;
+  *Z *= QMC5883L_SCALE_FACTOR;
+}

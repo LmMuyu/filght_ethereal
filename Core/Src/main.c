@@ -10,7 +10,7 @@
 #include "filght_mode.h"
 #include "bn-880.h"
 #include "mitter.h"
-// #include "qmc5883.h"
+#include "hal_qmc5883.h"
 
 int main(void)
 {
@@ -19,16 +19,16 @@ int main(void)
 
   MX_GPIO_Init();
   Hal_Struct_Uart_Init();
+  Mitt_Init();
 
   HAL_Delay(7000);
-
-  Mitt_Init();
 
   // Motor_Init();
   // Mpu6050_Task_Handle();
   // Bmp280_Init_Handle_Task();
-  Bn880_handle();
+  // Bn880_handle();
   // Queue_Receive_Handle();
+  qmc5883_Init_Handle_Task();
 
   // filght_mode_t *filght_mode = State_Machine();
 
