@@ -11,6 +11,8 @@ extern "C"
     bmp_tag = 0x01,
     UART_2_TAG = 0x02,
     UART_2_RECE_ALL_TAG = 0x03,
+    UART_3_TAG = 0x04,
+    USARTE_3_TAG = 0x05,
     OTHER_TAG = 0xff,
   } queue_tag_t;
 

@@ -189,4 +189,24 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
     Mitt_Get()->mitt_emit(Mitt_Get(), UART_2_TAG, arg);
   }
+  else if (huart->Instance == USART3)
+  {
+    arg_pdata_t arg = {
+        .key = (elementType)UART_3_TAG,
+    };
+
+    Mitt_Get()->mitt_emit(Mitt_Get(), UART_3_TAG, arg);
+  }
+}
+
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+  if (huart->Instance == USART3)
+  {
+    arg_pdata_t arg = {
+        .key = (elementType)USARTE_3_TAG,
+    };
+
+    Mitt_Get()->mitt_emit(Mitt_Get(), USARTE_3_TAG, arg);
+  }
 }

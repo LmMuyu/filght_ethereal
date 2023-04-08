@@ -112,16 +112,6 @@ void Motor_Control_Distribution(float euler[3], expected_thrust_t *expected_thru
   // float yaw = euler[2];
   // float pitch = euler[1];
 
-  // float M1_p = T - 0.70701 * euler[1] + 0.70701 * euler[0] + euler[2];
-  // float M2_p = T + 0.70701 * euler[1] - 0.70701 * euler[0] + euler[2];
-  // float M3_p = T + 0.70701 * euler[1] + 0.70701 * euler[0] - euler[2];
-  // float M4_p = T - 0.70701 * euler[1] - 0.70701 * euler[0] - euler[2];
-
-  // M1 = - 0.707 roll - 0.707 pitch + yaw + 0.8 thrust
-  // M2 = 0.707 roll - 0.707 pitch - yaw + 0.8 thrust
-  // M3 = 0.707 roll + 0.707 pitch + yaw + 0.8 thrust
-  // M4 = - 0.707 roll + 0.707 pitch - yaw + 0.8 thrust
-
   /**
    * 3        1
    *  \      /
@@ -136,10 +126,6 @@ void Motor_Control_Distribution(float euler[3], expected_thrust_t *expected_thru
   float M2_p = 0.9 * T + 0.707 * euler[1] + 0.707 * euler[0] + euler[2];
   float M3_p = 0.9 * T - 0.707 * euler[1] - 0.707 * euler[0] + euler[2];
   float M4_p = 0.9 * T + 0.707 * euler[1] - 0.707 * euler[0] - euler[2];
-
-  // sprintf(motor_pdata, "M1:%f M2:%f M3:%f M4:%f \n", MotorDistValue.M1, MotorDistValue.M2, MotorDistValue.M3, MotorDistValue.M4);
-  // Hal_Write_Buf(motor_pdata);
-  // Hal_SendData();
 
   Diff_Pwm_Motor_Pluse(&MotorDistValue, M1_p, M2_p, M3_p, M4_p);
 

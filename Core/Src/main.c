@@ -11,6 +11,8 @@
 #include "bn-880.h"
 #include "mitter.h"
 #include "hal_qmc5883.h"
+#include "s_bus.h"
+#include "s_bus_parser.h"
 
 int main(void)
 {
@@ -28,7 +30,9 @@ int main(void)
   // Bmp280_Init_Handle_Task();
   // Bn880_handle();
   // Queue_Receive_Handle();
-  qmc5883_Init_Handle_Task();
+  // qmc5883_Init_Handle_Task();
+
+  Start_Sbus_Parser();
 
   // filght_mode_t *filght_mode = State_Machine();
 
